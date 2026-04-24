@@ -20,11 +20,11 @@ const Dashboard = () => {
     const user = JSON.parse(userStr);
     setUser(user);
 
-    axios.get(`http://localhost:5000/orders/user/${user.id}`, { headers: { Authorization: `Bearer ${token}` } })
+    axios.get(`https://refund-system.onrender.com/orders/user/${user.id}`, { headers: { Authorization: `Bearer ${token}` } })
       .then(res => setOrders(res.data))
       .catch(err => console.error(err));
 
-    axios.get(`http://localhost:5000/returns/user/${user.id}`, { headers: { Authorization: `Bearer ${token}` } })
+    axios.get(`https://refund-system.onrender.com/returns/user/${user.id}`, { headers: { Authorization: `Bearer ${token}` } })
       .then(res => setReturns(res.data))
       .catch(err => console.error(err));
   }, [navigate]);

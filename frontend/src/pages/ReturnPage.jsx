@@ -26,7 +26,7 @@ const ReturnPage = () => {
     const user = JSON.parse(userStr);
     setUser(user);
 
-    axios.get(`http://localhost:5000/returns/user/${user.id}`, { headers: { Authorization: `Bearer ${token}` } })
+    axios.get(`https://refund-system.onrender.com/returns/user/${user.id}`, { headers: { Authorization: `Bearer ${token}` } })
       .then(res => {
         const existing = res.data.find(r => r.orderId === orderId && r.productId === productId);
         if (existing) {
@@ -52,7 +52,7 @@ const ReturnPage = () => {
       const formData = new FormData();
       formData.append('image', selectedFile);
       try {
-        const res = await axios.post('http://localhost:5000/api/ai-validate', formData, { headers: { Authorization: `Bearer ${token}` } });
+        const res = await axios.post('https://refund-system.onrender.com/api/ai-validate', formData, { headers: { Authorization: `Bearer ${token}` } });
         setAiResult(res.data);
       } catch (err) {
         console.error('AI validation failed', err);
@@ -67,7 +67,7 @@ const ReturnPage = () => {
   const handleInstantRefund = async () => {
     const token = localStorage.getItem('token');
     try {
-      const res = await axios.post('http://localhost:5000/returns/instant-refund', { returnId: returnReq.id }, {
+      const res = await axios.post('https://refund-system.onrender.com/returns/instant-refund', { returnId: returnReq.id }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setReturnReq(res.data);
@@ -88,7 +88,7 @@ const ReturnPage = () => {
     if (file) formData.append('proofImage', file);
 
     try {
-      const res = await axios.post('http://localhost:5000/returns/request', formData, {
+      const res = await axios.post('https://refund-system.onrender.com/returns/request', formData, {
         headers: { 
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'
@@ -192,7 +192,7 @@ const ReturnPage = () => {
                     Proof Image
                   </h4>
                   <div className="rounded-2xl overflow-hidden border border-white/20 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
-                    <img src={`http://localhost:5000${returnReq.proofImage}`} alt="Proof" className="w-full h-48 object-cover hover:scale-105 transition-transform duration-500 cursor-pointer opacity-90 hover:opacity-100" />
+                    <img src={`https://refund-system.onrender.com${returnReq.proofImage}`} alt="Proof" className="w-full h-48 object-cover hover:scale-105 transition-transform duration-500 cursor-pointer opacity-90 hover:opacity-100" />
                   </div>
                 </div>
               )}

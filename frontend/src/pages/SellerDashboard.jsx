@@ -26,11 +26,11 @@ const SellerDashboard = () => {
       return;
     }
 
-    axios.get('http://localhost:5000/products')
+    axios.get('https://refund-system.onrender.com/products')
       .then(res => setProducts(res.data.filter(p => p.sellerId === user.id)))
       .catch(err => console.error(err));
 
-    axios.get(`http://localhost:5000/returns/user/${user.id}`, { headers: { Authorization: `Bearer ${token}` } })
+    axios.get(`https://refund-system.onrender.com/returns/user/${user.id}`, { headers: { Authorization: `Bearer ${token}` } })
       .then(res => setReturns(res.data))
       .catch(err => console.error(err));
   }, [navigate, token]);
@@ -50,7 +50,7 @@ const SellerDashboard = () => {
   const handleAddProduct = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/products', newProduct, {
+      const res = await axios.post('https://refund-system.onrender.com/products', newProduct, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProducts([...products, res.data]);
@@ -65,7 +65,7 @@ const SellerDashboard = () => {
 
   const handleUpdateStatus = async (id, status) => {
     try {
-      const res = await axios.put(`http://localhost:5000/returns/status/${id}`, { status }, {
+      const res = await axios.put(`https://refund-system.onrender.com/returns/status/${id}`, { status }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setReturns(returns.map(r => r.id === id ? res.data : r));
@@ -275,7 +275,7 @@ const SellerDashboard = () => {
                       {ret.proofImage && (
                         <div className="mb-6">
                           <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-2">Proof Image</p>
-                          <img src={`http://localhost:5000${ret.proofImage}`} alt="Proof" className="h-40 object-cover rounded-xl border border-white/20 shadow-[0_0_15px_rgba(0,0,0,0.5)] cursor-pointer hover:opacity-90 hover:scale-105 transition-all" />
+                          <img src={`https://refund-system.onrender.com${ret.proofImage}`} alt="Proof" className="h-40 object-cover rounded-xl border border-white/20 shadow-[0_0_15px_rgba(0,0,0,0.5)] cursor-pointer hover:opacity-90 hover:scale-105 transition-all" />
                         </div>
                       )}
                     </div>

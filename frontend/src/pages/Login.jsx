@@ -15,7 +15,7 @@ const Login = () => {
     try {
       if (isLogin) {
         console.log("Attempting login with:", formData.email);
-        const res = await axios.post('http://127.0.0.1:5000/auth/login', {
+        const res = await axios.post('https://refund-system.onrender.com/auth/login', {
           email: formData.email,
           password: formData.password
         });
@@ -25,7 +25,7 @@ const Login = () => {
         navigate(res.data.user.role === 'seller' ? '/seller-dashboard' : '/dashboard');
       } else {
         console.log("Attempting signup for:", formData.email);
-        await axios.post('http://127.0.0.1:5000/auth/signup', {
+        await axios.post('https://refund-system.onrender.com/auth/signup', {
           ...formData,
           role: isSeller ? 'seller' : 'user'
         });

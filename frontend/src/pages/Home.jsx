@@ -14,7 +14,7 @@ const Home = () => {
   const [filter, setFilter] = useState('all');
 
   useEffect(() => {
-    axios.get('http://localhost:5000/products')
+    axios.get('https://refund-system.onrender.com/products')
       .then(res => {
         setProducts(res.data);
         setLoading(false);
@@ -34,7 +34,7 @@ const Home = () => {
     }
     setLoading(true);
     try {
-      await axios.post('http://localhost:5000/demo/run', {}, {
+      await axios.post('https://refund-system.onrender.com/demo/run', {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       alert('🎬 Demo sequence executed successfully! Redirecting to dashboard to track the automated return.');
@@ -55,7 +55,7 @@ const Home = () => {
     }
 
     try {
-      await axios.post('http://localhost:5000/orders', {
+      await axios.post('https://refund-system.onrender.com/orders', {
         items: [{ productId: product.id, name: product.name, price: product.price, quantity: 1 }],
         totalAmount: product.price
       }, {
