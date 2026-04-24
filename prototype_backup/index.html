@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReturnEasy | Premium Refund Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts: Outfit for a modern, premium look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Toast notifications container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Glassmorphism Navbar -->
+    <nav class="navbar glass-effect">
+        <div class="logo">
+            <div class="logo-icon"><i class="fa-solid fa-box-open"></i></div>
+            <span>Return<span class="fw-light">Easy</span></span>
+        </div>
+        <div class="nav-actions">
+            <button id="themeToggle" class="icon-btn" aria-label="Toggle Dark Mode">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <main class="container fade-in-up">
+        <!-- Main Form Section -->
+        <section class="left-panel">
+            <div class="card form-card">
+                <div class="card-header">
+                    <h2 class="card-title">Initiate a Return</h2>
+                    <p class="subtitle">Quick, painless, and completely transparent.</p>
+                </div>
+
+                <form id="returnForm" novalidate>
+                    <div class="form-group custom-input-group">
+                        <label for="orderId">Order ID</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-hashtag input-icon"></i>
+                            <input type="text" id="orderId" placeholder="ORD-12345" required autocomplete="off">
+                        </div>
+                        <span class="error-text" id="orderIdError">Please enter a valid format (e.g., ORD-12345)</span>
+                    </div>
+
+                    <div class="form-group custom-input-group">
+                        <label for="productName">Product Name</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-box input-icon"></i>
+                            <input type="text" id="productName" placeholder="What are you returning?" required
+                                autocomplete="off">
+                        </div>
+                        <span class="error-text" id="productError">Product name is required</span>
+                    </div>
+
+                    <div class="form-group custom-input-group">
+                        <label for="reason">Return Reason</label>
+                        <div class="input-wrapper select-wrapper">
+                            <i class="fa-solid fa-circle-question input-icon"></i>
+                            <select id="reason" required>
+                                <option value="" disabled selected>Why are you returning this?</option>
+                                <option value="Defective">Defective or Damaged</option>
+                                <option value="Wrong Item">Received Wrong Item</option>
+                                <option value="Not Needed">No Longer Needed</option>
+                                <option value="Size Issue">Size or Fit Issue</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down select-arrow"></i>
+                        </div>
+                        <span class="error-text" id="reasonError">Please select a reason</span>
+                    </div>
+
+                    <div class="form-group image-upload-group">
+                        <label>Condition Proof <span class="opt-label">(Optional)</span></label>
+                        <div class="file-drop-area" id="fileDropArea">
+                            <input type="file" id="imageUpload" accept="image/*">
+                            <div class="drop-msg">
+                                <div class="upload-icon-wrapper"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                                <span>Click or drag image here</span>
+                            </div>
+                        </div>
+                        <div id="imagePreview" class="image-preview">
+                            <img id="previewImg" src="" alt="Preview">
+                            <button type="button" id="removeImgBtn" class="remove-img-btn" aria-label="Remove image">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-glow" id="submitBtn">
+                        <span class="btn-text">Submit Request</span>
+                        <i class="fa-solid fa-arrow-right btn-icon"></i>
+                        <span class="loader hidden"></span>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Right Panel: Tracker and History -->
+        <section class="right-panel">
+
+            <!-- Smart Tracker Card -->
+            <div class="card tracker-card" id="trackerCard">
+                <!-- Injected via JS based on state -->
+                <div class="empty-state">
+                    <div class="empty-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                    <h3>No Active Returns</h3>
+                    <p>Submit a request on the left to track its progress here in real-time.</p>
+                </div>
+            </div>
+
+            <!-- History Section -->
+            <div class="card history-card" id="historyCard">
+                <div class="history-header">
+                    <h2 class="card-title">Return History</h2>
+                    <div class="filter-wrapper">
+                        <select id="statusFilter" class="modern-select">
+                            <option value="all">Visiblity: All</option>
+                            <option value="pending">Pending</option>
+                            <option value="refunded">Refunded</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="history-list" id="historyList">
+                    <!-- History items injected via JS -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
