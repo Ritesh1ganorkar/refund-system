@@ -1,3 +1,10 @@
+process.on('uncaughtException', err => {
+  console.error('Uncaught Exception:', err);
+});
+
+process.on('unhandledRejection', err => {
+  console.error('Unhandled Rejection:', err);
+});
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
@@ -12,7 +19,11 @@ app.use(express.json());
 
 // In-memory data structures
 const users = [];
-const products = [];
+const products = [
+  { id: 1, name: "Laptop", price: 50000 },
+  { id: 2, name: "Phone", price: 20000 },
+  { id: 3, name: "Headphones", price: 2000 }
+];
 const orders = [];
 const returns = [];
 
@@ -67,15 +78,7 @@ app.post('/auth/signup', async (req, res) => {
     return res.status(400).json({ message: 'User already exists' });
   }
   const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = { 
-    id: Date.now().toString(), 
-    name, 
-    email, 
-    password: hashedPassword, 
-    role: role || 'user',
-    trustScore: 90, // default high trust
-    returnCount: 0 
-  };
+  const newUser = { id: Date.now().toString(), name, email, password: hashedPassword, role: role || 'user' };
   users.push(newUser);
   res.status(201).json({ message: 'User created' });
 });
@@ -89,7 +92,7 @@ app.post('/auth/login', async (req, res) => {
   if (!validPassword) return res.status(400).json({ message: 'Invalid password' });
   
   const token = jwt.sign({ id: user.id, email: user.email, role: user.role, name: user.name }, SECRET_KEY);
-  res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role, trustScore: user.trustScore, returnCount: user.returnCount } });
+  res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
 });
 
 // --- Product Routes ---
@@ -141,25 +144,6 @@ app.post('/returns/request', authenticateToken, upload.single('proofImage'), (re
     return res.status(400).json({ message: 'Invalid order' });
   }
 
-  const user = users.find(u => u.id === req.user.id);
-  const product = products.find(p => p.id === productId);
-  
-  user.returnCount = (user.returnCount || 0) + 1;
-  
-  // Smart Refund Decision Engine
-  let fraudFlag = 'Verified';
-  if (user.returnCount > 5) {
-    fraudFlag = 'Risky';
-    user.trustScore = Math.max(0, user.trustScore - 20); // penalize
-  }
-
-  let autoStatus = 'Requested';
-  if (fraudFlag !== 'Risky') {
-    if (user.trustScore > 80 || (product && product.price < 50)) {
-      autoStatus = 'Approved';
-    }
-  }
-
   const newReturn = {
     id: Date.now().toString(),
     userId: req.user.id,
@@ -167,45 +151,11 @@ app.post('/returns/request', authenticateToken, upload.single('proofImage'), (re
     productId,
     reason,
     proofImage: req.file ? `/uploads/${req.file.filename}` : null,
-    status: autoStatus,
-    fraudFlag,
+    status: 'Requested',
     date: new Date()
   };
   returns.push(newReturn);
   res.status(201).json(newReturn);
-});
-
-// Instant Refund Route
-app.post('/returns/instant-refund', authenticateToken, (req, res) => {
-  const { returnId } = req.body;
-  const returnReq = returns.find(r => r.id === returnId);
-  if (!returnReq || returnReq.userId !== req.user.id) return res.status(404).json({ message: 'Return not found' });
-  
-  const user = users.find(u => u.id === req.user.id);
-  if (user.trustScore >= 90) {
-    returnReq.status = 'Refunded';
-    res.json(returnReq);
-  } else {
-    res.status(403).json({ message: 'Not eligible for instant refund' });
-  }
-});
-
-// AI Mock Endpoint
-app.post('/api/ai-validate', authenticateToken, upload.single('image'), (req, res) => {
-  setTimeout(() => {
-    res.json({ status: "verified", confidence: Math.floor(Math.random() * 15) + 85 });
-  }, 1500); // simulated AI delay
-});
-
-// Demo Setup Endpoint
-app.post('/demo/run', authenticateToken, (req, res) => {
-  const product = { id: 'demo-prod-' + Date.now(), sellerId: 'demo-seller', name: 'Demo Smart Headphones', price: 299, description: 'Noise cancelling headphones', imageUrl: 'https://via.placeholder.com/300' };
-  products.push(product);
-  const order = { id: 'DEMO-' + Date.now(), userId: req.user.id, items: [{productId: product.id, name: product.name, price: product.price, quantity: 1}], totalAmount: 299, date: new Date(), status: 'Delivered' };
-  orders.push(order);
-  const returnReq = { id: 'RET-' + Date.now(), userId: req.user.id, orderId: order.id, productId: product.id, reason: 'Demo smart tracking test', status: 'Requested', fraudFlag: 'Verified', date: new Date(), proofImage: null };
-  returns.push(returnReq);
-  res.json({ success: true, returnReq });
 });
 
 app.get('/returns/user/:id', authenticateToken, (req, res) => {
@@ -238,7 +188,13 @@ app.put('/returns/status/:id', authenticateToken, checkRole('seller'), (req, res
   res.json(returnReq);
 });
 
-const PORT = 5000;
-app.listen(PORT, '127.0.0.1', () => {
-  console.log(`Server running on http://127.0.0.1:${PORT}`);
+
+app.get("/", (req, res) => {
+  res.send("API is running...");
+});
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
 });
